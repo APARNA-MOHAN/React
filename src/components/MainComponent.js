@@ -6,12 +6,15 @@ import Header from './HeaderComponent';
 import Footer from './FooterComponent'
 import DishDetail from './DishDetailComponent';
 
+
 import About from './AboutComponent';
 
 import Contact from './ContactComponent';
 import {Switch,Route,Redirect,withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
+import {addComment,fetchDishes} from '../redux/ActionCreators';
 
+//receives state of reducers(store) as parameter and main component receives it as props.
 const mapStateToProps = state =>{
   return{
     dishes:state.dishes,
@@ -22,6 +25,10 @@ const mapStateToProps = state =>{
     
 }
 
+const mapDispatchToProps = dispatch =>({
+  addComment:(dishId,rating,author,comment)=> dispatch(addComment(dishId,rating,author,comment)),
+  fetchDishes:()=>{dispatch(fetchDishes())}
+});
 
 class Main extends Component {
   constructor(props){
@@ -30,14 +37,18 @@ class Main extends Component {
     
   }
 
-  
+  componentDidMount() {
+    this.props.fetchDishes();
+  } 
 
   
 
   render(){
     const HomePage=()=>{
       return(
-        <Home dish={this.props.dishes.filter((dish)=>dish.featured)[0]}
+        <Home dish={this.props.dishes.dishes.filter((dish)=>dish.featured)[0]}
+        dishesLoading={this.props.dishes.isLoading}
+        dishesErrmess={this.props.dishes.errmess}
         promotion={this.props.promotions.filter((promo)=>promo.featured)[0]}
         leader={this.props.leaders.filter((lea)=>lea.featured)[0]}
         />
@@ -47,8 +58,11 @@ class Main extends Component {
 
     const DishWithId=({match})=>{
       return(
-        <DishDetail dish={this.props.dishes.filter((dish) => dish.id === parseInt(match.params.dishId,10))[0]} 
-            comments={this.props.comments.filter((comment) => comment.dishId === parseInt(match.params.dishId,10))} />
+        <DishDetail dish={this.props.dishes.dishes.filter((dish) => dish.id === parseInt(match.params.dishId,10))[0]}
+        isLoading={this.props.dishes.isLoading}
+        errMess={this.props.dishes.errMess}
+        comments={this.props.comments.filter((comment) => comment.dishId === parseInt(match.params.dishId,10))}
+        addComment={this.props.addComment}/>
 
       );
     }
@@ -73,5 +87,5 @@ class Main extends Component {
   }
   
 }
-
-export default withRouter(connect(mapStateToProps)(Main));
+//connecting component with Reactrouter
+export default withRouter(connect(mapStateToProps,mapDispatchToProps)(Main));

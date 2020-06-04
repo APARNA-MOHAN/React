@@ -8,12 +8,7 @@ var imgStyle = {marginLeft : 20,marginRight : 20,marginBottom : 20 };
 
 function About(props){
 
-    const leaders = props.leaders.map((leader) => {
-        return (
-            <p>Leader {leader.name}</p>
-        );
-    });
-
+    
     const aboutEach=props.leaders.map((leader)=>{
         return(
             <div className="col-12">
