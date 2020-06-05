@@ -1,34 +1,42 @@
 import React from 'react';
 import { Breadcrumb, BreadcrumbItem, Card, CardBody, CardHeader, Media } from 'reactstrap';
 import { Link } from 'react-router-dom';
-
-
-var imgStyle = {marginLeft : 20,marginRight : 20,marginBottom : 20 };
-
+import { baseUrl } from '../shared/baseUrl';
+import { Fade, Stagger } from "react-animation-components";
+import {Loading} from './LoadingComponent';
 
 function About(props){
-
-    
-    const aboutEach=props.leaders.map((leader)=>{
-        return(
-            <div className="col-12">
-                <Media>
-                    <Media left>
-                        <Media object src={leader.image} style={imgStyle} alt={leader.name} />
-                    </Media>
-                    <Media body>
-                        <Media heading>{leader.name}</Media>
-                        {leader.designation}
-                        <br></br><br></br>
-                        {leader.description}
-                    </Media>
-                </Media> 
-                <br></br><br></br>               
-
-            </div>
-            
+    function RenderLeader({ leader }) {
+        return (
+          <Media className="mt-5">
+            <Media left className="mr-5">
+              <Media object src={baseUrl + leader.image} alt={leader.name} />
+            </Media>
+            <Media body>
+              <Media heading>{leader.name}</Media>
+              <p>{leader.designation}</p>
+              {leader.description}
+            </Media>
+          </Media>
         );
-    });
+    }
+
+    function RenderContent({ leaders,isLoading, errMess }) {
+        if (isLoading) {
+          return <Loading />;
+        } else if (errMess) {
+          return <h4>{errMess}</h4>;
+        } else
+          return (
+            <Stagger in>
+              {props.leaders.map(leader => (
+                <Fade in key={leader.id}>
+                  <RenderLeader key={leader.id} leader={leader} />
+                </Fade>
+              ))}
+            </Stagger>
+          );
+    }
 
     return(
         <div className="container">
@@ -85,7 +93,9 @@ function About(props){
                     <h2>Corporate Leadership</h2>
                 </div>
                 
-                {aboutEach}
+                <RenderContent leaders={props.leader}
+              isLoading={props.leaderLoading}
+              errMess={props.leaderErrMess}/>
                 
                 
             </div>
