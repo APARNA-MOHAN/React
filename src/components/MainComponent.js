@@ -57,11 +57,9 @@ const mapDispatchToProps = dispatch =>({
 });
 
 class Main extends Component {
-  constructor(props){
-    super(props);
-
+  
     
-  }
+  
 
   componentDidMount() {
     this.props.fetchDishes();
@@ -131,5 +129,5 @@ class Main extends Component {
   }
   
 }
-//connecting component with Reactrouter
+//connecting component with React-router
 export default withRouter(connect(mapStateToProps,mapDispatchToProps)(Main));
